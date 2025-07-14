@@ -72,7 +72,7 @@
                         <span class="badge bg-success">Selling</span>
                     </td>
                     <td>
-                        <button (click)="viewProduct(product.id!)">
+                        <button (click)="viewProduct(product.id)">
                             <svg [cIcon]="icons.cilSearch" size="xl" title="List Icon"></svg>
                         </button>
                     </td>
@@ -93,7 +93,7 @@
         <!-- Pagination Controls -->
         <div class="d-flex justify-content-between align-items-center mt-3">
             <div>
-                Showing {{ startIndex + 1 }}–{{ endIndex }} of {{ products.length }}
+                Showing {{ startIndex + 1 }}–{{ endIndex }} of {{ products }}
             </div>
             <nav>
                 <ul class="pagination mb-0">

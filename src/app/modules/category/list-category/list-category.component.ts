@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Category } from '../../../models/category.model';
 import { freeSet } from '@coreui/icons';
 import { CategoryService } from '../category.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -14,21 +15,26 @@ export class ListCategoryComponent implements OnInit {
   searchQuery = '';
   showParentsOnly = false;
   icons = freeSet;
-  categories: Category[] = [
-    { id: '0C24', name: 'Fish & Meat', description: 'Fish & Meat', iconUrl: 'assets/icons/fish.png', isPublished: true },
-    { id: '0BE8', name: 'Fruits & Vegetable', description: 'Fruits & Vegetable', iconUrl: 'assets/icons/fruit.png', isPublished: true },
-    // Add more dummy items...
-  ];
+  categories: Category[] = [];
 
   filteredCategories: Category[] = [];
 
-  public constructor(private categoryService: CategoryService){}
-  ngOnInit() {
-     this.categoryService.getAll().subscribe({
-      next: (res) => this.categories = res,
-      error: (err) => console.error('Error fetching categories', err)
+  public constructor(private categoryService: CategoryService, private router: Router) {
+
+  }
+  ngOnInit(): void {
+    this.categoryService.getAll().subscribe({
+      next: (response) => {
+        console.log(response)
+        this.categories = response.data?.items ?? [];
+        this.filteredCategories = this.categories.filter(c => c.parentId === null);
+      },
+      error: (err) => {
+        console.error('Error fetching categories:', err);
+      }
     });
   }
+
 
   filterCategories() {
     this.filteredCategories = this.categories.filter(c =>
@@ -51,5 +57,10 @@ export class ListCategoryComponent implements OnInit {
       this.categories = this.categories.filter(c => c.id !== id);
       this.filteredCategories = this.categories;
     }
+  }
+
+
+  viewCategory(id: number) {
+    this.router.navigate(['/category/category-detail', id]);
   }
 }

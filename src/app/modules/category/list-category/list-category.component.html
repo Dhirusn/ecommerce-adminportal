@@ -1,4 +1,5 @@
 <c-card class="p-4">
+  <!-- Header -->
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h4>Category</h4>
     <div class="d-flex gap-2">
@@ -10,6 +11,7 @@
     </div>
   </div>
 
+  <!-- Filters -->
   <div class="d-flex mb-3 gap-2">
     <input type="text" [(ngModel)]="searchQuery" placeholder="Search by Category name" class="form-control" />
     <button class="btn btn-success" (click)="filterCategories()">Filter</button>
@@ -20,12 +22,13 @@
     </div>
   </div>
 
+  <!-- Table -->
   <div class="table-responsive">
     <table class="table table-hover align-middle text-nowrap">
       <thead class="table-light">
         <tr>
           <th><input type="checkbox" /></th>
-          <th>ID</th>
+          <!-- <th>ID</th> -->
           <th>Icon</th>
           <th>Name</th>
           <th>Description</th>
@@ -34,34 +37,52 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let category of filteredCategories">
-          <td><input type="checkbox" /></td>
-          <td>{{ category.id }}</td>
-          <td><img [src]="category.iconUrl" width="24" height="24" /></td>
-          <td>{{ category.name }}</td>
-          <td>{{ category.description }}</td>
-          <td>
-            <input type="checkbox" class="form-check-input" [checked]="category.isPublished"
-              (change)="togglePublished(category)" />
-          </td>
-          <td>
-            <button class="btn btn-sm btn-outline-primary me-1">
-              <svg [cIcon]="icons.cilSearch" size="xl" title="List Icon"></svg>
-            </button>
-            <button class="btn btn-sm btn-outline-warning me-1">
-              <svg [cIcon]="icons.cilPencil" size="xl" title="Edit Icon"></svg>
-            </button>
-            <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.id)">
-              <svg [cIcon]="icons.cilTrash" size="xl" title="Delete Icon"></svg>
-            </button>
-          </td>
-
-        </tr>
+        <!-- Recursive rendering of categories -->
+        <ng-container *ngFor="let category of filteredCategories">
+          <ng-container *ngIf="!category.parentId">
+            <ng-container *ngTemplateOutlet="renderCategory; context: { $implicit: category, level: 0 }"></ng-container>
+          </ng-container>
+        </ng-container>
       </tbody>
     </table>
   </div>
 
+  <!-- Footer -->
   <div class="d-flex justify-content-end mt-3">
     <span>SHOWING 1-{{ filteredCategories.length }} OF {{ categories.length }}</span>
   </div>
 </c-card>
+
+<!-- Recursive Category Template -->
+<ng-template #renderCategory let-category let-level="level">
+  <tr id='cat_{{ category.id }}'>
+    <td><input type="checkbox" /></td>
+    <td><img [src]="category.iconUrl" width="24" height="24" /></td>
+    <td>
+      <span [style.paddingLeft.px]="level * 16">
+        {{ category.name }}
+      </span>
+    </td>
+    <td>{{ category.description }}</td>
+    <td>
+      <input type="checkbox" class="form-check-input" [checked]="category.isPublished"
+        (change)="togglePublished(category)" />
+    </td>
+    <td>
+      <button class="btn btn-sm btn-outline-primary me-1" (click)="viewCategory(category.id)">
+        <svg [cIcon]="icons.cilSearch" size="xl" title="View"></svg>
+      </button>
+      <button class="btn btn-sm btn-outline-warning me-1" >
+        <svg [cIcon]="icons.cilPencil" size="xl" title="Edit"></svg>
+      </button>
+      <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.id)">
+        <svg [cIcon]="icons.cilTrash" size="xl" title="Delete"></svg>
+      </button>
+    </td>
+  </tr>
+
+  <!-- Render children recursively -->
+  <ng-container *ngFor="let child of category.children">
+    <ng-container *ngTemplateOutlet="renderCategory; context: { $implicit: child, level: level + 1 }"></ng-container>
+  </ng-container>
+</ng-template>

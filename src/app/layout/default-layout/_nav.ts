@@ -16,7 +16,7 @@ export const navItems: INavData[] = [
   },
   {
     name: 'Catalog',
-    url: '/products',
+    url: '',
     iconComponent: { name: 'cil-box' },
     children: [
       {
@@ -25,7 +25,7 @@ export const navItems: INavData[] = [
         icon: 'nav-icon-bullet'
       },
        {
-        name: 'Category List',
+        name: 'Category',
         url: '/category',
         icon: 'nav-icon-bullet'
       }

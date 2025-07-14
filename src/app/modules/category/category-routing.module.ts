@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ListCategoryComponent } from './list-category/list-category.component';
+import { CategoryDetailComponent } from './category-detail/category-detail.component';
 
 const routes: Routes = [
   {
@@ -11,7 +12,12 @@ const routes: Routes = [
       {
         path: 'category-list',
         component: ListCategoryComponent,
-        data: { title: 'Product List' }
+        data: { title: 'Category List' }
+      },
+       {
+        path: 'category-detail/:id',
+        component: CategoryDetailComponent,
+        data: { title: 'Category Detail' }
       },
       {
         path: 'create-product',

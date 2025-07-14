@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
 import { ProductApiDto, ProductDto, ApiResponse, Product } from '../../dto/product.dto';
+import { PaginatedResult, Result } from '../../models/PaginatedResult.model';
 
 
 @Injectable({
@@ -12,12 +13,12 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<ApiResponse<Product[]>> {
-    return this.http.get<ApiResponse<Product[]>>(`${this.baseUrl}/getAll`);
+  getAll(): Observable<Result<PaginatedResult<Product>>> {
+    return this.http.get<Result<PaginatedResult<Product>>>(`${this.baseUrl}/getAll`);
   }
 
 
-  getById(id: number): Observable<ApiResponse<Product>> {
+  getById(id: string): Observable<ApiResponse<Product>> {
     return this.http.get<ApiResponse<Product>>(`${this.baseUrl}/getById/${id}`);
   }
 

@@ -1,1 +1,51 @@
-<p>category-detail works!</p>
+<c-card class="p-4" *ngIf="category">
+  <!-- Heading -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Category: {{ category.name }}</h4>
+    <button class="btn btn-outline-primary" routerLink="/categories">← Back to List</button>
+  </div>
+
+  <!-- Create Child Category Button -->
+  <div class="mb-3">
+    <button class="btn btn-success" (click)="createChild(category.id)">+ Add Subcategory</button>
+  </div>
+
+  <!-- Child Categories Table -->
+  <div class="table-responsive" *ngIf="category.children?.length; else noChildren">
+    <table class="table table-hover align-middle text-nowrap">
+      <thead class="table-light">
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Published</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let child of category.children">
+          <td>{{ child.id }}</td>
+          <td>{{ child.name }}</td>
+          <td>{{ child.description || '-' }}</td>
+          <td>
+            <input type="checkbox" class="form-check-input" [checked]="child.isPublished"
+              (change)="togglePublished(child)" />
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-warning me-1" (click)="editCategory(child)">
+              <svg [cIcon]="icons.cilPencil" size="xl" title="Edit"></svg>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(child.id)">
+              <svg [cIcon]="icons.cilTrash" size="xl" title="Delete"></svg>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Children Template -->
+  <ng-template #noChildren>
+    <p class="text-muted">No subcategories found.</p>
+  </ng-template>
+</c-card>

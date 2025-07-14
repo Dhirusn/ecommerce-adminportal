@@ -9,6 +9,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
+import { PaginatedResult, Result } from '../../../../models/PaginatedResult.model';
 @Component({
   selector: 'app-product-list',
   imports: [CommonModule,
@@ -26,15 +27,16 @@ export class ProductListComponent {
   pageSize = 5;
   currentPage = 1;
 
-  products: Product[] = [];
-
+  products: Product[] | undefined = [];
+  res :Result<PaginatedResult<Product>> | null = null;
   constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
     this.productService.getAll().subscribe({
       next: (response) => {
         console.log(response);
-        this.products = response.data; // ✅ This is where the array is
+        this.products = response.data?.items; // ✅ This is where the array is
+        this.res = response;
       },
       error: (err) => {
         console.error('Error fetching products:', err);
@@ -44,7 +46,7 @@ export class ProductListComponent {
   }
 
   get totalPages(): number {
-    return Math.ceil(this.products.length / this.pageSize);
+    return Math.ceil(this.res?.data?.totalPages!);
   }
 
   get startIndex(): number {
@@ -53,11 +55,11 @@ export class ProductListComponent {
 
   get endIndex(): number {
     const end = this.startIndex + this.pageSize;
-    return end > this.products.length ? this.products.length : end;
+    return end > (this.res?.data?.totalCount || 0) ? (this.res?.data?.totalCount || 0) : end;
   }
 
   get paginatedProducts() {
-    return this.products.slice(this.startIndex, this.endIndex);
+    return this.res?.data?.items.slice(this.startIndex, this.endIndex);
   }
 
   get pages(): number[] {
@@ -78,7 +80,7 @@ export class ProductListComponent {
     this.currentPage = page;
   }
 
-  viewProduct(id: number) {
+  viewProduct(id: any) {
     this.router.navigate(['/products/product-details', id]);
   }
 

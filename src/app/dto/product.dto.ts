@@ -25,7 +25,7 @@ export interface ApiResponse<T> {
 }
 
 export interface Product {
-  id: number| null;
+  id: string| null;
   title: string| null;
   description: string| null;
   price: number| null;

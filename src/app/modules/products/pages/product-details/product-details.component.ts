@@ -46,7 +46,7 @@ export class ProductDetailsComponent {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (id) {
-      this.productService.getById(parseInt(id)).subscribe({
+      this.productService.getById(id).subscribe({
         next: (response) => {
           console.log(response);
           this.product = response.data;
