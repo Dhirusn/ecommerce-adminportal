@@ -1,0 +1,118 @@
+<!-- Buttons -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <button class="btn btn-outline-primary me-2">⬆ Export</button>
+        <button class="btn btn-outline-secondary">⬇ Import</button>
+    </div>
+    <div>
+        <button class="btn btn-outline-secondary me-2">Bulk Action</button>
+        <button class="btn btn-danger me-2">🗑 Delete</button>
+        <button class="btn btn-success" (click)="openCreateForm()">➕ Add Product</button>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4 p-3">
+    <div class="row g-3">
+        <div class="col-md-4">
+            <input class="form-control" placeholder="Search Product" />
+        </div>
+        <div class="col-md-3">
+            <select class="form-select">
+                <option selected disabled>Category</option>
+                <option>Skin Care</option>
+                <option>Fresh Fruits</option>
+                <option>Fresh Vegetable</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select">
+                <option selected disabled>Price</option>
+                <option>Low to High</option>
+                <option>High to Low</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button class="btn btn-success w-100">Filter</button>
+            <button class="btn btn-outline-secondary w-100">Reset</button>
+        </div>
+    </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle text-nowrap">
+            <thead class="table-light">
+                <tr>
+                    <th><input type="checkbox" /></th>
+                    <th>Product Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
+                    <th>Sale Price</th>
+                    <th>Stock</th>
+                    <th>Status</th>
+                    <th>View</th>
+                    <th>Published</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let product of paginatedProducts">
+                    <td><input type="checkbox" /></td>
+                    <td>
+                        <img [src]="product.imageUrl" alt="img" width="30" height="30" class="me-2 rounded" />
+                        {{ product.title }}
+                    </td>
+                    <td>{{ product.category?.name }}</td>
+                    <td><strong>${{ product.price }}</strong></td>
+                    <td><strong>${{ product.price }}</strong></td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                        <span class="badge bg-success">Selling</span>
+                    </td>
+                    <td>
+                        <button (click)="viewProduct(product.id!)">
+                            <svg [cIcon]="icons.cilSearch" size="xl" title="List Icon"></svg>
+                        </button>
+                    </td>
+                    <td>
+                        <!-- <input type="checkbox" class="form-check-input" [(ngModel)]="product.published" /> -->
+                    </td>
+                    <td>
+                        <button class="btn btn-link p-0 me-2" (click)="openEditForm(product)">
+                            <svg [cIcon]="icons.cilPencil" size="xl" title="Edit Icon"></svg>
+                        </button>
+                        <button class="btn btn-link p-0" (click)="deleteProduct(product.id)">
+                            <svg [cIcon]="icons.cilTrash" size="xl" title="Delete Icon"></svg>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+                Showing {{ startIndex + 1 }}–{{ endIndex }} of {{ products.length }}
+            </div>
+            <nav>
+                <ul class="pagination mb-0">
+                    <li class="page-item" [class.disabled]="currentPage === 1">
+                        <button class="page-link" (click)="prevPage()">Previous</button>
+                    </li>
+                    <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+                        <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+                    </li>
+                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                        <button class="page-link" (click)="nextPage()">Next</button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </div>
+</div>
+
+<app-product-form [visible]="showForm" [(visible)]="showForm" [product]="selectedProduct"
+    (submit)="handleSubmit($event)">
+</app-product-form>

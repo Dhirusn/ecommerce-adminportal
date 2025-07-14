@@ -1,0 +1,58 @@
+<ng-container *ngIf="product">
+  <h3 class="mb-4 fw-bold">Product Details</h3>
+
+  <div class="d-flex gap-5">
+    <div>
+      <img [src]="product.imageUrl" alt="Product Image" width="200" />
+    </div>
+
+    <div>
+      <p><strong>Status:</strong> <span class="text-success">This product Showing</span></p>
+      <h4>{{ product.title }}</h4>
+      <p><strong>SKU:</strong> {{ product.id }}</p>
+
+      <h3>\${{ product.price }}</h3>
+      <c-badge color="success">In Stock</c-badge>
+      <span class="ms-2">QUANTITY: {{ product.stock }}</span>
+
+      <p class="mt-3">{{ product.description }}</p>
+
+      <p><strong>Category:</strong> Men</p>
+      <c-badge color="secondary" class="me-1">premium-shirt</c-badge>
+      <c-badge color="secondary" class="me-1">t-shirt</c-badge>
+      <c-badge color="secondary">new-t-shirt</c-badge>
+
+      <div class="mt-4">
+        <button cButton  color="success" (click)="openEditor()">Edit Product</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🟦 Offcanvas Edit Form -->
+  <c-offcanvas placement="end" [visible]="showEditor" (visibleChange)="showEditor = $event">
+    <c-offcanvas-header>
+      <h5>Edit Product</h5>
+      <button type="button" class="btn-close text-reset" aria-label="Close" (click)="showEditor = false"></button>
+    </c-offcanvas-header>
+    <c-offcanvas-body>
+      <form (ngSubmit)="saveProduct()">
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input class="form-control" [(ngModel)]="product.title" name="title" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Price</label>
+          <input class="form-control" type="number" [(ngModel)]="product.price" name="price" />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea class="form-control" rows="4" [(ngModel)]="product.description" name="description"></textarea>
+        </div>
+        <div class="text-end">
+          <button color="primary" type="submit">Save</button>
+          <button c-button color="secondary" class="ms-2" (click)="showEditor = false">Cancel</button>
+        </div>
+      </form>
+    </c-offcanvas-body>
+  </c-offcanvas>
+</ng-container>

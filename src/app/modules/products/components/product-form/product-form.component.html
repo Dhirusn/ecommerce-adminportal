@@ -1,0 +1,76 @@
+<c-offcanvas class="offcanvas-wide" placement="end" [visible]="visible" (visibleChange)="visibleChange.emit($event)">
+  <c-offcanvas-header>
+    <h5>{{ product?.id ? 'Update' : 'Create' }} Product</h5>
+    <button type="button" class="btn-close text-reset" (click)="cancel()"></button>
+  </c-offcanvas-header>
+
+  <c-offcanvas-body>
+    <form *ngIf="product" (ngSubmit)="emitSubmit()">
+      <!-- Title -->
+      <div class="mb-3">
+        <label class="form-label">Product Title/Name</label>
+        <input class="form-control" [(ngModel)]="product.title" name="title" />
+      </div>
+
+      <!-- Description -->
+      <div class="mb-3">
+        <label class="form-label">Product Description</label>
+        <textarea class="form-control" rows="3" [(ngModel)]="product.description" name="description"></textarea>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mb-3">
+        <label class="form-label">Product Images</label>
+        <div class="border border-dashed p-4 text-center rounded" style="border-style: dashed;">
+          <input type="file" (change)="handleImageUpload($event)" accept="image/*" multiple hidden #fileInput />
+          <div (click)="fileInput.click()" class="cursor-pointer text-muted">
+            <i class="bi bi-upload fs-4"></i><br />
+            Drag your images here<br />
+            <small>(Only *.jpeg, *.png, *.webp)</small>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="d-flex flex-wrap gap-2 mt-3">
+          <div *ngFor="let img of product.images || []; let i = index" class="position-relative">
+            <img [src]="img" alt="Preview" width="80" class="rounded border" />
+            <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0" (click)="removeImage(i)">
+              ×
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SKU -->
+      <div class="mb-3">
+        <label class="form-label">Product SKU</label>
+        <input class="form-control" [(ngModel)]="product.sku" name="sku" />
+      </div>
+
+      <!-- Barcode -->
+      <div class="mb-3">
+        <label class="form-label">Product Price</label>
+        <input class="form-control" [(ngModel)]="product.price" name="barcode" />
+      </div>
+
+      <!-- Category -->
+      <div class="mb-3">
+        <label class="form-label">Category</label>
+        <input class="form-control" [(ngModel)]="product.category" name="category" />
+      </div>
+
+      <!-- Buttons -->
+      <div class="d-flex justify-content-between mt-4">
+        <button c-button color="danger" type="button" (click)="cancel()">Cancel</button>
+        <button c-button color="success" type="submit">
+          {{ product?.id ? 'Update' : 'Create' }} Product
+        </button>
+      </div>
+    </form>
+
+    <!-- Optional: fallback UI -->
+    <div *ngIf="!product" class="text-center text-muted">
+      Loading product form...
+    </div>
+  </c-offcanvas-body>
+</c-offcanvas>

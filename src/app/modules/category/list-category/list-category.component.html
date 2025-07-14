@@ -1,0 +1,67 @@
+<c-card class="p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4>Category</h4>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary">Export</button>
+      <button class="btn btn-outline-secondary">Import</button>
+      <button class="btn btn-secondary" disabled>Bulk Action</button>
+      <button class="btn btn-danger">Delete</button>
+      <button class="btn btn-success">+ Add Category</button>
+    </div>
+  </div>
+
+  <div class="d-flex mb-3 gap-2">
+    <input type="text" [(ngModel)]="searchQuery" placeholder="Search by Category name" class="form-control" />
+    <button class="btn btn-success" (click)="filterCategories()">Filter</button>
+    <button class="btn btn-light" (click)="resetFilters()">Reset</button>
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <label class="form-check-label">Parents Only</label>
+      <input type="checkbox" [(ngModel)]="showParentsOnly" class="form-check-input" />
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-hover align-middle text-nowrap">
+      <thead class="table-light">
+        <tr>
+          <th><input type="checkbox" /></th>
+          <th>ID</th>
+          <th>Icon</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Published</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let category of filteredCategories">
+          <td><input type="checkbox" /></td>
+          <td>{{ category.id }}</td>
+          <td><img [src]="category.iconUrl" width="24" height="24" /></td>
+          <td>{{ category.name }}</td>
+          <td>{{ category.description }}</td>
+          <td>
+            <input type="checkbox" class="form-check-input" [checked]="category.isPublished"
+              (change)="togglePublished(category)" />
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-primary me-1">
+              <svg [cIcon]="icons.cilSearch" size="xl" title="List Icon"></svg>
+            </button>
+            <button class="btn btn-sm btn-outline-warning me-1">
+              <svg [cIcon]="icons.cilPencil" size="xl" title="Edit Icon"></svg>
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="deleteCategory(category.id)">
+              <svg [cIcon]="icons.cilTrash" size="xl" title="Delete Icon"></svg>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-end mt-3">
+    <span>SHOWING 1-{{ filteredCategories.length }} OF {{ categories.length }}</span>
+  </div>
+</c-card>
