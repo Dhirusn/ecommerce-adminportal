@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, Inject, inject, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -10,16 +10,28 @@ import { iconSubset } from './icons/icon-subset';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CategoryModule } from '../app/modules/category/category.module';
+import { AuthService } from '@auth0/auth0-angular';
+import { LoginComponent } from './views/pages/login/login.component';
 
 @Component({
   selector: 'app-root',
-  standalone:true,
-  template: '<router-outlet />',
+  standalone: true,
+  template: `<!-- Show login when NOT authenticated -->
+<div *ngIf="!(auth.isAuthenticated$ | async)">
+  <app-login></app-login>
+</div>
+
+<!-- Show app content when authenticated -->
+<div *ngIf="auth.isAuthenticated$ | async">
+  <router-outlet></router-outlet>
+</div>
+`,
   imports: [
     RouterOutlet,
     CommonModule,
     FormsModule,
-    CategoryModule
+    CategoryModule,
+    LoginComponent
   ]
 })
 export class AppComponent implements OnInit {
@@ -32,7 +44,7 @@ export class AppComponent implements OnInit {
 
   readonly #colorModeService = inject(ColorModeService);
   readonly #iconSetService = inject(IconSetService);
-
+  readonly auth = inject(AuthService)
   constructor() {
     this.#titleService.setTitle(this.title);
     // iconSet singleton

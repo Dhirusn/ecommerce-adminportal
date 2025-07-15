@@ -24,6 +24,7 @@ import {
 
 import { IconDirective } from '@coreui/icons-angular';
 import { AuthModule, AuthService } from '@auth0/auth0-angular';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-default-header',
@@ -43,6 +44,8 @@ import { AuthModule, AuthService } from '@auth0/auth0-angular';
 export class DefaultHeaderComponent extends HeaderComponent {
 
   readonly #colorModeService = inject(ColorModeService);
+  readonly document = inject(DOCUMENT);
+
   readonly colorMode = this.#colorModeService.colorMode;
 
   readonly colorModes = [
@@ -56,7 +59,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor(private auth: AuthService) {
+  constructor(private auth: AuthService, ) {
     super();
   }
 
@@ -143,6 +146,6 @@ export class DefaultHeaderComponent extends HeaderComponent {
   }
 
   logout(): void {
-    //this.auth.logout({ returnTo: window.location.origin });
+    this.auth.logout({ logoutParams: { returnTo: document.location.origin } });
   }
 }

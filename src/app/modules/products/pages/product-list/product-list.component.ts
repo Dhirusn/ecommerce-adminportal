@@ -62,11 +62,11 @@ export class ProductListComponent {
     return this.res?.data?.items.slice(this.startIndex, this.endIndex);
   }
 
-  get pages(): number[] {
-    return Array(this.totalPages)
-      .fill(0)
-      .map((_, i) => i + 1);
-  }
+  // get pages(): number[] {
+  //   return Array(this.totalPages)
+  //     .fill(0)
+  //     .map((_, i) => i + 1);
+  // }
 
   nextPage() {
     if (this.currentPage < this.totalPages) this.currentPage++;
