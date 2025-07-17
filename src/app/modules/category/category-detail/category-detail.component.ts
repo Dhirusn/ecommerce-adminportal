@@ -24,7 +24,6 @@ export class CategoryDetailComponent implements OnInit {
       this.categoryService.getById(id).subscribe({
         next: (response) => {
           this.category = response; // or just response if not wrapped
-          console.log(response)
         },
         error: (err) => {
           console.error('Failed to fetch category:', err);

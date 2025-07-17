@@ -4,12 +4,12 @@ import { CommonModule } from '@angular/common';
 import { freeSet } from '@coreui/icons';
 import { IconDirective, IconModule } from '@coreui/icons-angular';
 import { ProductService } from '../../../../services/product/product.service';
-import { Product, ProductApiDto } from '../../../../dto/product.dto';
 import { HttpClientModule } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import { PaginatedResult, Result } from '../../../../models/PaginatedResult.model';
+import { Product } from '../../../../models/product.model';
 @Component({
   selector: 'app-product-list',
   imports: [CommonModule,
@@ -24,15 +24,20 @@ import { PaginatedResult, Result } from '../../../../models/PaginatedResult.mode
 export class ProductListComponent {
 
   icons = freeSet;
-  pageSize = 5;
+  pageSize = 10;
   currentPage = 1;
 
   products: Product[] | undefined = [];
-  res :Result<PaginatedResult<Product>> | null = null;
+  res: Result<PaginatedResult<Product>> | null = null;
   constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
-    this.productService.getAll().subscribe({
+    this.updatePageList(1, this.pageSize);
+
+  }
+
+  updatePageList(pageNumber: number, pageSize: number) {
+    this.productService.getAll(pageNumber, pageSize).subscribe({
       next: (response) => {
         console.log(response);
         this.products = response.data?.items; // ✅ This is where the array is
@@ -42,38 +47,26 @@ export class ProductListComponent {
         console.error('Error fetching products:', err);
       }
     });
-
   }
 
   get totalPages(): number {
     return Math.ceil(this.res?.data?.totalPages!);
   }
 
-  get startIndex(): number {
-    return (this.currentPage - 1) * this.pageSize;
-  }
-
-  get endIndex(): number {
-    const end = this.startIndex + this.pageSize;
-    return end > (this.res?.data?.totalCount || 0) ? (this.res?.data?.totalCount || 0) : end;
-  }
-
   get paginatedProducts() {
-    return this.res?.data?.items.slice(this.startIndex, this.endIndex);
+    return this.products;
   }
-
-  // get pages(): number[] {
-  //   return Array(this.totalPages)
-  //     .fill(0)
-  //     .map((_, i) => i + 1);
-  // }
 
   nextPage() {
-    if (this.currentPage < this.totalPages) this.currentPage++;
+    if (this.res?.data?.hasNext && this.res?.data?.nextPageNumber) {
+      this.updatePageList(this.res?.data?.nextPageNumber, this.pageSize)
+    }
   }
 
   prevPage() {
-    if (this.currentPage > 1) this.currentPage--;
+    if (this.res?.data?.hasPrevious && this.res?.data?.previousPageNumber) {
+      this.updatePageList(this.res?.data?.previousPageNumber, this.pageSize);
+    }
   }
 
   goToPage(page: number) {
@@ -85,29 +78,31 @@ export class ProductListComponent {
   }
 
   public showForm = false;
-  public selectedProduct!: Object;
+  public selectedProduct!: Product;
 
   openCreateForm() {
     this.selectedProduct = {
+      id: null,
       title: '',
       description: '',
-      images: [],
-      sku: '',
-      price: 0
+      imageUrls: [],
+      price: 0,
+      brandId: '',
+      category: null,
+      stock: 0,
     };
     this.showForm = true;
   }
 
-  openEditForm(product: any) {
+  openEditForm(product: Product) {
     this.selectedProduct = { ...product }; // clone to avoid binding issues
     this.showForm = true;
   }
 
-  handleSubmit(data: any) {
+  handleSubmit(data: Product) {
     if (data.id) {
       this.productService.update(data.id, data);
     } else {
-      debugger
       this.productService.create(data as Product);
     }
   }

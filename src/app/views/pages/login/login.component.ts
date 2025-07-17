@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { NgStyle } from '@angular/common';
-import { IconDirective } from '@coreui/icons-angular';
 import { ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective, InputGroupComponent, InputGroupTextDirective, FormControlDirective, ButtonDirective } from '@coreui/angular';
 import { AuthService } from '@auth0/auth0-angular';
 
@@ -8,7 +6,7 @@ import { AuthService } from '@auth0/auth0-angular';
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: []
+  imports: [ContainerComponent, RowComponent, ColComponent, CardGroupComponent, TextColorDirective, CardComponent, CardBodyComponent, FormDirective,  InputGroupTextDirective, ButtonDirective]
 })
 export class LoginComponent {
 

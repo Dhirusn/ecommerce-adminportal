@@ -17,7 +17,6 @@ export class AuthInterceptor implements HttpInterceptor {
     // Only attach token for APIs you trust
     return from(this.auth.getAccessTokenSilently()).pipe(
       switchMap(token => {
-        console.log(token)
         const authReq = req.clone({
           setHeaders: {
             Authorization: `Bearer ${token}`

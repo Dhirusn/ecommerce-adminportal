@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { ProductApiDto, ProductDto, ApiResponse, Product } from '../../dto/product.dto';
+import { ApiResponse, Product, ProductCreateDto } from '../../models/product.model';
 import { PaginatedResult, Result } from '../../models/PaginatedResult.model';
 
 
@@ -13,8 +13,8 @@ export class ProductService {
 
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<Result<PaginatedResult<Product>>> {
-    return this.http.get<Result<PaginatedResult<Product>>>(`${this.baseUrl}/getAll`);
+  getAll(pageNumber: number, pageSize: number): Observable<Result<PaginatedResult<Product>>> {
+    return this.http.get<Result<PaginatedResult<Product>>>(`${this.baseUrl}/getAll?pageNumber=${pageNumber}&pageSize=${pageSize}`);
   }
 
 
@@ -24,7 +24,22 @@ export class ProductService {
 
   create(product: Product): void {
     debugger;
-    this.http.post(`${this.baseUrl}/create`, product).pipe(
+    if (product.id === undefined) {
+      return
+    }
+
+
+    const createProduct: ProductCreateDto = {
+      title: product.title!,
+      description: product.description!,
+      price: product.price ?? 0,
+      // imageUrl: product.imageUrl!,
+      stock: product.stock ?? 0,
+      brandId: product.brandId!,
+      categoryIds: product.category?.map(c => c.id)!,
+    };
+
+    this.http.post(`${this.baseUrl}/create`, createProduct).pipe(
       catchError(error => {
         console.error('Error creating product:', error);
         return throwError(() => new Error('Failed to create product'));
@@ -42,8 +57,8 @@ export class ProductService {
   }
 
 
-  update(id: number, product: ProductDto): Observable<ProductApiDto> {
-    return this.http.put<ProductApiDto>(`${this.baseUrl}/update/${id}`, product);
+  update(id: string, product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.baseUrl}/update/${id}`, product);
   }
 
   delete(id: number): Observable<void> {

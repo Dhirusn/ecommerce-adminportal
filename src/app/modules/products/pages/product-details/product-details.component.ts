@@ -15,8 +15,9 @@ import {
   OffcanvasToggleDirective
 } from '@coreui/angular';
 import { ActivatedRoute } from '@angular/router';
-import { Product } from '../../../../dto/product.dto';
+
 import { ProductService } from '../../../../services/product/product.service';
+import { Product } from '../../../../models/product.model';
 
 @Component({
   selector: 'app-product-details',

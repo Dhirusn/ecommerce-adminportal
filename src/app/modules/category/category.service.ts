@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Category } from '../../models/category.model';
 import { HttpClient } from '@angular/common/http';
-import { ApiResponse } from '../../dto/product.dto';
 import { PaginatedResult, Result } from '../../models/PaginatedResult.model';
 
 @Injectable({

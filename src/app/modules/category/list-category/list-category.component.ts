@@ -25,7 +25,6 @@ export class ListCategoryComponent implements OnInit {
   ngOnInit(): void {
     this.categoryService.getAll().subscribe({
       next: (response) => {
-        console.log(response)
         this.categories = response.data?.items ?? [];
         this.filteredCategories = this.categories.filter(c => c.parentId === null);
       },
