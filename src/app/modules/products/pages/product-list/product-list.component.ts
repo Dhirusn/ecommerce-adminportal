@@ -1,22 +1,21 @@
-import { Component, NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { freeSet } from '@coreui/icons';
-import { IconDirective, IconModule } from '@coreui/icons-angular';
+import { IconModule } from '@coreui/icons-angular';
 import { ProductService } from '../../../../services/product/product.service';
-import { HttpClientModule } from '@angular/common/http';
-import { catchError, of } from 'rxjs';
 import { Router } from '@angular/router';
 import { ProductFormComponent } from '../../components/product-form/product-form.component';
 import { PaginatedResult, Result } from '../../../../models/PaginatedResult.model';
 import { Product } from '../../../../models/product.model';
+import { CategoryNamesPipe } from '../../../../pipes/category-names.pipe';
 @Component({
   selector: 'app-product-list',
   imports: [CommonModule,
     FormsModule,
     IconModule,    // ✅ Add this
-    HttpClientModule,
-    ProductFormComponent
+    ProductFormComponent,
+    CategoryNamesPipe
   ],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss'
@@ -29,11 +28,14 @@ export class ProductListComponent {
 
   products: Product[] | undefined = [];
   res: Result<PaginatedResult<Product>> | null = null;
+  badgeColors: string[] = [
+    'primary', 'secondary', 'success', 'danger', 'warning', 'info', 'dark'
+  ];
+
   constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
     this.updatePageList(1, this.pageSize);
-
   }
 
   updatePageList(pageNumber: number, pageSize: number) {
@@ -88,7 +90,7 @@ export class ProductListComponent {
       imageUrls: [],
       price: 0,
       brandId: '',
-      category: null,
+      categories: null,
       stock: 0,
     };
     this.showForm = true;
@@ -101,10 +103,16 @@ export class ProductListComponent {
 
   handleSubmit(data: Product) {
     if (data.id) {
-      this.productService.update(data.id, data);
+      this.productService.update(data);
     } else {
       this.productService.create(data as Product);
     }
+  }
+
+  getBadgeColor(category: string): string {
+    // Pick a random color each time
+    const index = Math.floor(Math.random() * this.badgeColors.length);
+    return this.badgeColors[index];
   }
 
   deleteProduct(id: any) {

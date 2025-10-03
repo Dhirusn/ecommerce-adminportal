@@ -1,0 +1,86 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h4>Create New Order</h4>
+        </div>
+        <div class="card-body">
+          <form [formGroup]="orderForm" (ngSubmit)="submitOrder()">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="customerId" class="form-label">Customer *</label>
+                  <select class="form-select" formControlName="customerId">
+                    <option value="">Select Customer</option>
+                    <!-- Options will be populated from service -->
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="paymentMethod" class="form-label">Payment Method *</label>
+                  <select class="form-select" formControlName="paymentMethod">
+                    <option value="">Select Payment Method</option>
+                    <option value="credit_card">Credit Card</option>
+                    <option value="paypal">PayPal</option>
+                    <option value="bank_transfer">Bank Transfer</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="shippingAddressId" class="form-label">Shipping Address *</label>
+                  <select class="form-select" formControlName="shippingAddressId">
+                    <option value="">Select Shipping Address</option>
+                    <!-- Options will be populated from service -->
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label for="billingAddressId" class="form-label">Billing Address *</label>
+                  <select class="form-select" formControlName="billingAddressId">
+                    <option value="">Select Billing Address</option>
+                    <!-- Options will be populated from service -->
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <h5>Order Items</h5>
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Unit Price</th>
+                      <th>Total</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td colspan="5" class="text-center">No items added yet</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <button type="button" class="btn btn-outline-primary">Add Item</button>
+            </div>
+
+            <div class="d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary me-2" routerLink="/orders/list">Cancel</button>
+              <button type="submit" class="btn btn-primary" [disabled]="!orderForm.valid">Create Order</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

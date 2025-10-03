@@ -31,6 +31,104 @@ export const navItems: INavData[] = [
       }
     ]
   },
+  {
+    name: 'Orders',
+    url: '/orders',
+    iconComponent: { name: 'cil-basket' },
+    children: [
+      {
+        name: 'Order List',
+        url: '/orders/list',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'New Orders',
+        url: '/orders/new',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Pending Orders',
+        url: '/orders/pending',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Completed Orders',
+        url: '/orders/completed',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
+  {
+    name: 'Customers',
+    url: '/customers',
+    iconComponent: { name: 'cil-people' },
+    children: [
+      {
+        name: 'Customer List',
+        url: '/customers/list',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Customer Groups',
+        url: '/customers/groups',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Customer Reviews',
+        url: '/customers/reviews',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
+  {
+    name: 'Shipping',
+    url: '/shipping',
+    iconComponent: { name: 'cil-truck' },
+    children: [
+      {
+        name: 'Shipping Rules',
+        url: '/shipping/rules',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Carriers',
+        url: '/shipping/carriers',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Tracking',
+        url: '/shipping/tracking',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
+  {
+    name: 'Settings',
+    url: '/settings',
+    iconComponent: { name: 'cil-settings' },
+    children: [
+      {
+        name: 'Store Settings',
+        url: '/settings/store',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Payment Settings',
+        url: '/settings/payment',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'Email Templates',
+        url: '/settings/email',
+        icon: 'nav-icon-bullet'
+      },
+      {
+        name: 'User Management',
+        url: '/settings/users',
+        icon: 'nav-icon-bullet'
+      }
+    ]
+  },
   // {
   //   name: 'Typography',
   //   url: '/theme/typography',

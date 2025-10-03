@@ -1,4 +1,126 @@
 <app-widgets-dropdown />
+
+<!-- Ecommerce Analytics Cards -->
+<c-row class="mb-4">
+  <c-col md="3">
+    <c-card color="primary" text-color="white">
+      <c-card-body>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0">{{ totalOrders || 0 }}</h4>
+            <p class="mb-0">Total Orders</p>
+          </div>
+          <svg cIcon name="cilBasket" size="3xl"></svg>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col md="3">
+    <c-card color="success" text-color="white">
+      <c-card-body>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0">{{ totalRevenue | currency }}</h4>
+            <p class="mb-0">Total Revenue</p>
+          </div>
+          <svg cIcon name="cilDollar" size="3xl"></svg>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col md="3">
+    <c-card color="info" text-color="white">
+      <c-card-body>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0">{{ totalCustomers || 0 }}</h4>
+            <p class="mb-0">Total Customers</p>
+          </div>
+          <svg cIcon name="cilPeople" size="3xl"></svg>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col md="3">
+    <c-card color="warning" text-color="white">
+      <c-card-body>
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0">{{ totalProducts || 0 }}</h4>
+            <p class="mb-0">Total Products</p>
+          </div>
+          <svg cIcon name="cilBox" size="3xl"></svg>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<!-- Recent Orders and Quick Actions -->
+<c-row class="mb-4">
+  <c-col md="8">
+    <c-card>
+      <c-card-header>
+        <h5>Recent Orders</h5>
+      </c-card-header>
+      <c-card-body>
+        <div class="table-responsive">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Total</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of recentOrders">
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.customerName }}</td>
+                <td>
+                  <c-badge [color]="getOrderStatusColor(order.status)">
+                    {{ order.status }}
+                  </c-badge>
+                </td>
+                <td>{{ order.total | currency }}</td>
+                <td>{{ order.date | date:'short' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+  <c-col md="4">
+    <c-card>
+      <c-card-header>
+        <h5>Quick Actions</h5>
+      </c-card-header>
+      <c-card-body>
+        <div class="d-grid gap-2">
+          <button cButton color="primary" routerLink="/orders/create">
+            <svg cIcon name="cilPlus" class="me-2"></svg>
+            Create Order
+          </button>
+          <button cButton color="success" routerLink="/products/create-product">
+            <svg cIcon name="cilPlus" class="me-2"></svg>
+            Add Product
+          </button>
+          <button cButton color="info" routerLink="/customers/create">
+            <svg cIcon name="cilPlus" class="me-2"></svg>
+            Add Customer
+          </button>
+          <button cButton color="warning" routerLink="/category/add-category">
+            <svg cIcon name="cilPlus" class="me-2"></svg>
+            Add Category
+          </button>
+        </div>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
 <c-card class="my-4">
   <c-card-body>
     <c-row>

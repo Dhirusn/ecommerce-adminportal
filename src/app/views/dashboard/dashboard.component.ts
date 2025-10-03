@@ -1,6 +1,7 @@
-import { NgStyle } from '@angular/common';
+import { NgStyle, CommonModule } from '@angular/common';
 import { Component, DestroyRef, DOCUMENT, effect, inject, OnInit, Renderer2, signal, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { ChartOptions } from 'chart.js';
 import {
   AvatarComponent,
@@ -15,7 +16,8 @@ import {
   GutterDirective,
   ProgressComponent,
   RowComponent,
-  TableDirective
+  TableDirective,
+  BadgeComponent
 } from '@coreui/angular';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import { IconDirective } from '@coreui/icons-angular';
@@ -23,6 +25,9 @@ import { IconDirective } from '@coreui/icons-angular';
 import { WidgetsBrandComponent } from '../widgets/widgets-brand/widgets-brand.component';
 import { WidgetsDropdownComponent } from '../widgets/widgets-dropdown/widgets-dropdown.component';
 import { DashboardChartsData, IChartProps } from './dashboard-charts-data';
+import { OrderService } from '../../modules/orders/services/order.service';
+import { CustomerService } from '../../modules/customers/services/customer.service';
+import { ProductService } from '../../services/product/product.service';
 
 interface IUser {
   name: string;
@@ -41,7 +46,7 @@ interface IUser {
 @Component({
   templateUrl: 'dashboard.component.html',
   styleUrls: ['dashboard.component.scss'],
-  imports: [WidgetsDropdownComponent, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressComponent, WidgetsBrandComponent, CardHeaderComponent, TableDirective, AvatarComponent]
+  imports: [WidgetsDropdownComponent, CardComponent, CardBodyComponent, RowComponent, ColComponent, ButtonDirective, IconDirective, ReactiveFormsModule, ButtonGroupComponent, FormCheckLabelDirective, ChartjsComponent, NgStyle, CardFooterComponent, GutterDirective, ProgressComponent, WidgetsBrandComponent, CardHeaderComponent, TableDirective, AvatarComponent, CommonModule, RouterModule, BadgeComponent]
 })
 export class DashboardComponent implements OnInit {
 
@@ -143,9 +148,91 @@ export class DashboardComponent implements OnInit {
     trafficRadio: new FormControl('Month')
   });
 
+  // Ecommerce Analytics Properties
+  public totalOrders: number = 0;
+  public totalRevenue: number = 0;
+  public totalCustomers: number = 0;
+  public totalProducts: number = 0;
+  public recentOrders: any[] = [];
+
+  constructor(
+    private orderService: OrderService,
+    private customerService: CustomerService,
+    private productService: ProductService
+  ) {}
+
   ngOnInit(): void {
     this.initCharts();
     this.updateChartOnColorModeChange();
+    this.loadEcommerceAnalytics();
+  }
+
+  private loadEcommerceAnalytics(): void {
+    // Load sample data - replace with actual API calls
+    this.loadOrderAnalytics();
+    this.loadCustomerAnalytics();
+    this.loadProductAnalytics();
+    this.loadRecentOrders();
+  }
+
+  private loadOrderAnalytics(): void {
+    // Replace with actual API call
+    this.totalOrders = 1247;
+    this.totalRevenue = 125390.50;
+  }
+
+  private loadCustomerAnalytics(): void {
+    // Replace with actual API call
+    this.totalCustomers = 456;
+  }
+
+  private loadProductAnalytics(): void {
+    // Replace with actual API call
+    this.totalProducts = 89;
+  }
+
+  private loadRecentOrders(): void {
+    // Replace with actual API call
+    this.recentOrders = [
+      {
+        orderNumber: 'ORD-001',
+        customerName: 'John Doe',
+        status: 'pending',
+        total: 299.99,
+        date: new Date()
+      },
+      {
+        orderNumber: 'ORD-002',
+        customerName: 'Jane Smith',
+        status: 'shipped',
+        total: 149.50,
+        date: new Date()
+      },
+      {
+        orderNumber: 'ORD-003',
+        customerName: 'Bob Johnson',
+        status: 'delivered',
+        total: 89.99,
+        date: new Date()
+      }
+    ];
+  }
+
+  public getOrderStatusColor(status: string): string {
+    switch (status) {
+      case 'pending':
+        return 'warning';
+      case 'processing':
+        return 'info';
+      case 'shipped':
+        return 'primary';
+      case 'delivered':
+        return 'success';
+      case 'cancelled':
+        return 'danger';
+      default:
+        return 'secondary';
+    }
   }
 
   initCharts(): void {

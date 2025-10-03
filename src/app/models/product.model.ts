@@ -8,7 +8,18 @@ export interface Product {
   imageUrls: ProductImages[] | null;
   stock: number | null;
   brandId: string | null;
-  category: Category[] | null;
+  categories: Category[] | null;
+}
+
+export interface ProductUpdateDto {
+  id: string | null;
+  title: string | null;
+  description: string | null;
+  price: number | null;
+  imageUrls: ProductImages[] | null;
+  stock: number | null;
+  brandId: string | null;
+  CategoryIds: string[] | null;
 }
 
 export interface ProductCreateDto {

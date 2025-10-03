@@ -17,7 +17,9 @@ import {
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
 import { navItems } from './_nav';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService } from '../../services/auth/auth.service';
+
+
 
 function isOverflown(element: HTMLElement) {
   return (
@@ -52,6 +54,6 @@ export class DefaultLayoutComponent {
   constructor(public auth: AuthService) { }
 
   ngOnInit() {
-    this.auth.user$.subscribe(console.log);
+    //this.auth.user$.subscribe(console.log);
   }
 }

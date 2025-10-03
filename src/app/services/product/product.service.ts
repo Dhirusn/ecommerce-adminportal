@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, throwError } from 'rxjs';
-import { ApiResponse, Product, ProductCreateDto } from '../../models/product.model';
+import { ApiResponse, Product, ProductCreateDto, ProductUpdateDto } from '../../models/product.model';
 import { PaginatedResult, Result } from '../../models/PaginatedResult.model';
 
 
@@ -9,7 +9,7 @@ import { PaginatedResult, Result } from '../../models/PaginatedResult.model';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'https://localhost:7273/api/Products';
+  private baseUrl = 'https://localhost:7260/products';
 
   constructor(private http: HttpClient) { }
 
@@ -23,7 +23,6 @@ export class ProductService {
   }
 
   create(product: Product): void {
-    debugger;
     if (product.id === undefined) {
       return
     }
@@ -36,7 +35,7 @@ export class ProductService {
       // imageUrl: product.imageUrl!,
       stock: product.stock ?? 0,
       brandId: product.brandId!,
-      categoryIds: product.category?.map(c => c.id)!,
+      categoryIds: product.categories?.map(c => c.id)!,
     };
 
     this.http.post(`${this.baseUrl}/create`, createProduct).pipe(
@@ -57,9 +56,42 @@ export class ProductService {
   }
 
 
-  update(id: string, product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.baseUrl}/update/${id}`, product);
+  // Update existing product
+  update(product: Product): void {
+    if (!product.id) {
+      throwError(() => new Error('Product ID is required for update'));
+      return;
+    }
+
+    // Map Product → ProductUpdateDto
+    const updateDto: ProductUpdateDto = {
+      id: product.id,
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrls: product.imageUrls,
+      stock: product.stock,
+      brandId: product.brandId,
+      CategoryIds: product.categories?.map(c => c.id) ?? []  // map to IDs
+    };
+
+    this.http.put<Product>(`${this.baseUrl}/update`, updateDto).pipe(
+      catchError((error) => {
+        console.error('Error updating product:', error);
+        return throwError(() => new Error('Failed to update product'));
+      })
+    ).subscribe({
+      next: (response) => {
+        console.log('Product updated successfully:', response);
+        // Optionally show success message or navigate
+      },
+      error: (err) => {
+        // Already handled in catchError
+        console.error('Error updating product:', err);
+      }
+    });
   }
+
 
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/delete/${id}`);

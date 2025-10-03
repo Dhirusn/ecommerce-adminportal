@@ -23,14 +23,15 @@ import {
 } from '@coreui/angular';
 
 import { IconDirective } from '@coreui/icons-angular';
-import { AuthModule, AuthService } from '@auth0/auth0-angular';
+
 import { DOCUMENT } from '@angular/common';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-default-header',
   templateUrl: './default-header.component.html',
   imports: [
-    ContainerComponent, AuthModule ,
+    ContainerComponent,
     HeaderTogglerDirective,
     SidebarToggleDirective,
     IconDirective,
@@ -59,7 +60,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  constructor(private auth: AuthService, ) {
+  constructor(private auth: AuthService,) {
     super();
   }
 
@@ -142,10 +143,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
 
   login(): void {
-    this.auth.loginWithRedirect();
+    //this.auth.login();
   }
 
   logout(): void {
-    this.auth.logout({ logoutParams: { returnTo: document.location.origin } });
+    this.auth.logout();
   }
 }

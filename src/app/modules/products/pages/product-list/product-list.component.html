@@ -64,12 +64,15 @@
                         <img src="product.imageUrls" alt="img" width="30" height="30" class="me-2 rounded" />
                         {{ product.title }}
                     </td>
-                    <td></td>
-                    <!-- <td>{{
-                            product.category?.forEach(element => {
-                                element.name
-                        })
-                        }}</td> -->
+                    <td>
+                        <div *ngIf="product.categories?.length">
+                            <ng-container *ngFor="let category of product.categories; let i = index">
+                                <span class="badge me-1" [ngClass]="'bg-' + getBadgeColor(category.name)">
+                                    {{ category.name }}
+                                </span>
+                            </ng-container>
+                        </div>
+                    </td>
                     <td><strong>${{ product.price }}</strong></td>
                     <td><strong>${{ product.price }}</strong></td>
                     <td>{{ product.stock }}</td>

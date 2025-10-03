@@ -1,0 +1,258 @@
+<div class="container-fluid">
+  <c-row>
+    <c-col xs="12">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <c-spinner></c-spinner>
+        <p class="mt-3">Loading order details...</p>
+      </div>
+
+      <!-- Order Details -->
+      <div *ngIf="!loading && order">
+        <!-- Header -->
+        <c-card class="mb-4">
+          <c-card-header class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0">Order #{{ order.orderNumber }}</h4>
+              <small class="text-muted">{{ formatDate(order.orderDate) }}</small>
+            </div>
+            <div>
+              <c-button-group>
+                <button cButton color="outline-secondary" (click)="goBack()">
+                  <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+                  Back to Orders
+                </button>
+                <button cButton color="outline-primary" (click)="editOrder()">
+                  <svg cIcon name="cilPencil" class="me-2"></svg>
+                  Edit Order
+                </button>
+                <button cButton color="outline-info" (click)="printInvoice()">
+                  <svg cIcon name="cilPrint" class="me-2"></svg>
+                  Print Invoice
+                </button>
+              </c-button-group>
+            </div>
+          </c-card-header>
+        </c-card>
+
+        <!-- Order Status and Payment -->
+        <c-row class="mb-4">
+          <c-col md="6">
+            <c-card>
+              <c-card-header>
+                <h5>Order Status</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="mb-3">
+                  <label class="form-label">Current Status</label>
+                  <div>
+                    <c-badge [color]="getStatusBadgeColor(order.status)" >
+                      {{ order.status | titlecase }}
+                    </c-badge>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Update Status</label>
+                  <select class="form-select" [value]="order.status"
+                          (change)="updateOrderStatus($any($event.target).value)">
+                    <option *ngFor="let status of orderStatuses" [value]="status">
+                      {{ status | titlecase }}
+                    </option>
+                  </select>
+                </div>
+                <div *ngIf="order.trackingNumber" class="mb-3">
+                  <label class="form-label">Tracking Number</label>
+                  <div class="input-group">
+                    <input class="form-control" [value]="order.trackingNumber" readonly>
+                    <button class="btn btn-outline-primary" type="button">
+                      <svg cIcon name="cilExternalLink"></svg>
+                    </button>
+                  </div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+          <c-col md="6">
+            <c-card>
+              <c-card-header>
+                <h5>Payment Information</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="mb-3">
+                  <label class="form-label">Payment Status</label>
+                  <div>
+                    <c-badge [color]="getPaymentStatusColor(order.paymentStatus)">
+                      {{ order.paymentStatus | titlecase }}
+                    </c-badge>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Update Payment Status</label>
+                  <select class="form-select" [value]="order.paymentStatus"
+                          (change)="updatePaymentStatus($any($event.target).value)">
+                    <option *ngFor="let status of paymentStatuses" [value]="status">
+                      {{ status | titlecase }}
+                    </option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="form-label">Payment Method</label>
+                  <div class="form-control-plaintext">{{ order.paymentMethod | titlecase }}</div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+
+        <!-- Customer Information -->
+        <c-row class="mb-4">
+          <c-col md="6">
+            <c-card>
+              <c-card-header>
+                <h5>Customer Information</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="mb-3">
+                  <strong>{{ order.customer.firstName }} {{ order.customer.lastName }}</strong>
+                </div>
+                <div class="mb-2">
+                  <strong>Email:</strong> {{ order.customer.email }}
+                </div>
+                <div class="mb-2" *ngIf="order.customer.phone">
+                  <strong>Phone:</strong> {{ order.customer.phone }}
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+          <c-col md="6">
+            <c-card>
+              <c-card-header>
+                <h5>Shipping Address</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="mb-2">
+                  <strong>{{ order.shippingAddress.firstName }} {{ order.shippingAddress.lastName }}</strong>
+                </div>
+                <div class="mb-2">{{ order.shippingAddress.addressLine1 }}</div>
+                <div class="mb-2" *ngIf="order.shippingAddress.addressLine2">
+                  {{ order.shippingAddress.addressLine2 }}
+                </div>
+                <div class="mb-2">
+                  {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.postalCode }}
+                </div>
+                <div class="mb-2">{{ order.shippingAddress.country }}</div>
+                <div *ngIf="order.shippingAddress.phone">
+                  <strong>Phone:</strong> {{ order.shippingAddress.phone }}
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+
+        <!-- Order Items -->
+        <c-card class="mb-4">
+          <c-card-header>
+            <h5>Order Items</h5>
+          </c-card-header>
+          <c-card-body>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Quantity</th>
+                    <th>Unit Price</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of order.orderItems">
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <img *ngIf="item.productImage" [src]="item.productImage"
+                             class="me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                        <div>
+                          <strong>{{ item.productName }}</strong>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{{ item.productSku }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ formatCurrency(item.unitPrice) }}</td>
+                    <td>{{ formatCurrency(item.totalPrice) }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </c-card-body>
+        </c-card>
+
+        <!-- Order Summary -->
+        <c-row>
+          <c-col md="8">
+            <c-card>
+              <c-card-header>
+                <h5>Order Notes</h5>
+              </c-card-header>
+              <c-card-body>
+                <div *ngIf="order.orderNotes && order.orderNotes.length > 0">
+                  <div *ngFor="let note of order.orderNotes" class="mb-3 p-3 bg-light rounded">
+                    <div class="mb-2">
+                      <strong>{{ note.createdBy }}</strong>
+                      <small class="text-muted ms-2">{{ formatDate(note.createdAt) }}</small>
+                      <c-badge *ngIf="note.isInternal" color="warning" class="ms-2">Internal</c-badge>
+                    </div>
+                    <div>{{ note.note }}</div>
+                  </div>
+                </div>
+                <div *ngIf="!order.orderNotes || order.orderNotes.length === 0" class="text-muted">
+                  No notes available for this order.
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+          <c-col md="4">
+            <c-card>
+              <c-card-header>
+                <h5>Order Summary</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Subtotal:</span>
+                  <span>{{ formatCurrency(order.subtotal) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Shipping:</span>
+                  <span>{{ formatCurrency(order.shippingAmount) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                  <span>Tax:</span>
+                  <span>{{ formatCurrency(order.taxAmount) }}</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2" *ngIf="order.discountAmount > 0">
+                  <span>Discount:</span>
+                  <span class="text-success">-{{ formatCurrency(order.discountAmount) }}</span>
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-0">
+                  <strong>Total:</strong>
+                  <strong>{{ formatCurrency(order.totalAmount) }}</strong>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+      </div>
+
+      <!-- Order Not Found -->
+      <div *ngIf="!loading && !order" class="text-center py-5">
+        <h4>Order Not Found</h4>
+        <p class="text-muted">The order you're looking for doesn't exist.</p>
+        <button cButton color="primary" (click)="goBack()">
+          Back to Orders
+        </button>
+      </div>
+    </c-col>
+  </c-row>
+</div>

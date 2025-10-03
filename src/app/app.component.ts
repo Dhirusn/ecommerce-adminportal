@@ -10,19 +10,20 @@ import { iconSubset } from './icons/icon-subset';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { CategoryModule } from '../app/modules/category/category.module';
-import { AuthService } from '@auth0/auth0-angular';
+
 import { LoginComponent } from './views/pages/login/login.component';
+import { AuthService } from './services/auth/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   template: `<!-- Show login when NOT authenticated -->
-<div *ngIf="!(auth.isAuthenticated$ | async)">
+<div *ngIf="!(auth.isLoggedIn$ | async)">
   <app-login></app-login>
 </div>
 
 <!-- Show app content when authenticated -->
-<div *ngIf="auth.isAuthenticated$ | async">
+<div *ngIf="auth.isLoggedIn$ | async">
   <router-outlet></router-outlet>
 </div>
 `,

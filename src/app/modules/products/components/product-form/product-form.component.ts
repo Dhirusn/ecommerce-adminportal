@@ -34,7 +34,7 @@ export class ProductFormComponent implements OnInit {
     imageUrls: null,
     stock: 0,
     brandId: null,
-    category: null,
+    categories: null,
     id: null
   };
 
@@ -100,17 +100,17 @@ export class ProductFormComponent implements OnInit {
   }
 
   addCategory(category: Category) {
-    if (!this.product.category) {
-      this.product.category = [];
+    if (!this.product.categories) {
+      this.product.categories = [];
     }
-    const alreadyExists = this.product.category.find(c => c.id === category.id);
+    const alreadyExists = this.product.categories.find(c => c.id === category.id);
     if (!alreadyExists) {
-      this.product.category.push(category);
+      this.product.categories.push(category);
     }
   }
 
   removeCategory(index: number) {
-    this.product.category?.splice(index, 1);
+    this.product.categories?.splice(index, 1);
   }
 
 

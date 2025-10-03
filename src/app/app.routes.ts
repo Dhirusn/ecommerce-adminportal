@@ -58,6 +58,22 @@ export const routes: Routes = [
         loadChildren: () => import('./views/charts/routes').then((m) => m.routes)
       },
       {
+        path: 'orders',
+        loadChildren: () => import('../app/modules/orders/routes').then((m) => m.routes)
+      },
+      {
+        path: 'customers',
+        loadChildren: () => import('../app/modules/customers/routes').then((m) => m.routes)
+      },
+      {
+        path: 'shipping',
+        loadChildren: () => import('../app/modules/shipping/routes').then((m) => m.routes)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('../app/modules/settings/routes').then((m) => m.routes)
+      },
+      {
         path: 'pages',
         loadChildren: () => import('./views/pages/routes').then((m) => m.routes)
       }

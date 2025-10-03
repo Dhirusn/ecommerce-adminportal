@@ -1,0 +1,204 @@
+<div class="container-fluid">
+  <c-row>
+    <c-col xs="12">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="text-center py-5">
+        <c-spinner></c-spinner>
+        <p class="mt-3">Loading customer details...</p>
+      </div>
+
+      <!-- Customer Details -->
+      <div *ngIf="!loading && customer">
+        <!-- Header -->
+        <c-card class="mb-4">
+          <c-card-header class="d-flex justify-content-between align-items-center">
+            <div>
+              <h4 class="mb-0">{{ customer.firstName }} {{ customer.lastName }}</h4>
+              <small class="text-muted">Customer ID: {{ customer.id }}</small>
+            </div>
+            <div>
+              <c-button-group>
+                <button cButton color="outline-secondary" (click)="goBack()">
+                  <svg cIcon name="cilArrowLeft" class="me-2"></svg>
+                  Back to Customers
+                </button>
+                <button cButton color="outline-primary" (click)="editCustomer()">
+                  <svg cIcon name="cilPencil" class="me-2"></svg>
+                  Edit Customer
+                </button>
+                <button cButton color="outline-info">
+                  <svg cIcon name="cilEnvelopeClosed" class="me-2"></svg>
+                  Send Email
+                </button>
+              </c-button-group>
+            </div>
+          </c-card-header>
+        </c-card>
+
+        <!-- Customer Information -->
+        <c-row class="mb-4">
+          <c-col md="8">
+            <c-card>
+              <c-card-header>
+                <h5>Customer Information</h5>
+              </c-card-header>
+              <c-card-body>
+                <c-row>
+                  <c-col md="6">
+                    <div class="mb-3">
+                      <strong>Name:</strong> {{ customer.firstName }} {{ customer.lastName }}
+                    </div>
+                    <div class="mb-3">
+                      <strong>Email:</strong> {{ customer.email }}
+                    </div>
+                    <div class="mb-3" *ngIf="customer.phone">
+                      <strong>Phone:</strong> {{ customer.phone }}
+                    </div>
+                    <div class="mb-3" *ngIf="customer.dateOfBirth">
+                      <strong>Date of Birth:</strong> {{ formatDate(customer.dateOfBirth) }}
+                    </div>
+                  </c-col>
+                  <c-col md="6">
+                    <div class="mb-3">
+                      <strong>Status:</strong>
+                      <c-badge [color]="customer.isActive ? 'success' : 'danger'" class="ms-2">
+                        {{ customer.isActive ? 'Active' : 'Inactive' }}
+                      </c-badge>
+                    </div>
+                    <div class="mb-3">
+                      <strong>Customer Group:</strong> {{ customer.customerGroup?.name || 'No Group' }}
+                    </div>
+                    <div class="mb-3">
+                      <strong>Member Since:</strong> {{ formatDate(customer.createdAt) }}
+                    </div>
+                    <div class="mb-3" *ngIf="customer.lastOrderDate">
+                      <strong>Last Order:</strong> {{ formatDate(customer.lastOrderDate) }}
+                    </div>
+                  </c-col>
+                </c-row>
+              </c-card-body>
+            </c-card>
+          </c-col>
+          <c-col md="4">
+            <c-card>
+              <c-card-header>
+                <h5>Customer Statistics</h5>
+              </c-card-header>
+              <c-card-body>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between">
+                    <span>Total Orders:</span>
+                    <strong>{{ customer.totalOrders }}</strong>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between">
+                    <span>Total Spent:</span>
+                    <strong>{{ formatCurrency(customer.totalSpent) }}</strong>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <div class="d-flex justify-content-between">
+                    <span>Average Order Value:</span>
+                    <strong>{{ formatCurrency(customer.averageOrderValue) }}</strong>
+                  </div>
+                </div>
+              </c-card-body>
+            </c-card>
+          </c-col>
+        </c-row>
+
+        <!-- Addresses -->
+        <c-card class="mb-4">
+          <c-card-header>
+            <h5>Addresses</h5>
+          </c-card-header>
+          <c-card-body>
+            <c-row>
+              <c-col md="6" *ngFor="let address of customer.addresses">
+                <div class="mb-3 p-3 border rounded">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="mb-0">{{ address.type | titlecase }} Address</h6>
+                    <c-badge *ngIf="address.isDefault" color="primary">Default</c-badge>
+                  </div>
+                  <div>
+                    <div>{{ address.firstName }} {{ address.lastName }}</div>
+                    <div *ngIf="address.company">{{ address.company }}</div>
+                    <div>{{ address.addressLine1 }}</div>
+                    <div *ngIf="address.addressLine2">{{ address.addressLine2 }}</div>
+                    <div>{{ address.city }}, {{ address.state }} {{ address.postalCode }}</div>
+                    <div>{{ address.country }}</div>
+                    <div *ngIf="address.phone">Phone: {{ address.phone }}</div>
+                  </div>
+                </div>
+              </c-col>
+              <div *ngIf="customer.addresses.length === 0" class="text-muted">
+                No addresses found for this customer.
+              </div>
+            </c-row>
+          </c-card-body>
+        </c-card>
+
+        <!-- Order History -->
+        <c-card>
+          <c-card-header>
+            <h5>Recent Orders</h5>
+          </c-card-header>
+          <c-card-body>
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Payment Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let order of customer.orders">
+                    <td>{{ order.orderNumber }}</td>
+                    <td>{{ formatDate(order.orderDate) }}</td>
+                    <td>
+                      <c-badge [color]="getOrderStatusColor(order.status)">
+                        {{ order.status | titlecase }}
+                      </c-badge>
+                    </td>
+                    <td>{{ formatCurrency(order.totalAmount) }}</td>
+                    <td>
+                      <c-badge [color]="order.paymentStatus === 'paid' ? 'success' : 'warning'">
+                        {{ order.paymentStatus | titlecase }}
+                      </c-badge>
+                    </td>
+                    <td>
+                      <button cButton size="sm" color="outline-primary" 
+                              [routerLink]="['/orders/details', order.id]">
+                        <svg cIcon name="cilEye"></svg>
+                      </button>
+                    </td>
+                  </tr>
+                  <tr *ngIf="customer.orders.length === 0">
+                    <td colspan="6" class="text-center text-muted">
+                      No orders found for this customer.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </c-card-body>
+        </c-card>
+      </div>
+
+      <!-- Customer Not Found -->
+      <div *ngIf="!loading && !customer" class="text-center py-5">
+        <h4>Customer Not Found</h4>
+        <p class="text-muted">The customer you're looking for doesn't exist.</p>
+        <button cButton color="primary" (click)="goBack()">
+          Back to Customers
+        </button>
+      </div>
+    </c-col>
+  </c-row>
+</div>

@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <c-row>
+    <c-col xs="12">
+      <c-card>
+        <c-card-header class="d-flex justify-content-between align-items-center">
+          <h4 class="mb-0">Customer List</h4>
+          <button cButton color="primary" routerLink="/customers/create">
+            <svg cIcon name="cilPlus" class="me-2"></svg>
+            Create Customer
+          </button>
+        </c-card-header>
+        
+        <c-card-body>
+          <!-- Loading Spinner -->
+          <div *ngIf="loading" class="text-center py-4">
+            <c-spinner></c-spinner>
+            <p class="mt-2">Loading customers...</p>
+          </div>
+
+          <!-- Customers Table -->
+          <div *ngIf="!loading" class="table-responsive">
+            <table cTable class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Customer</th>
+                  <th>Email</th>
+                  <th>Orders</th>
+                  <th>Total Spent</th>
+                  <th>Last Order</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let customer of customers; trackBy: trackByCustomerId">
+                  <td>
+                    <div>{{ customer.firstName }} {{ customer.lastName }}</div>
+                    <c-badge [color]="customer.isActive ? 'success' : 'danger'">
+                      {{ customer.isActive ? 'Active' : 'Inactive' }}
+                    </c-badge>
+                  </td>
+                  <td>{{ customer.email }}</td>
+                  <td>{{ customer.totalOrders }}</td>
+                  <td>{{ formatCurrency(customer.totalSpent) }}</td>
+                  <td>{{ customer.lastOrderDate ? formatDate(customer.lastOrderDate) : 'Never' }}</td>
+                  <td>
+                    <c-button-group>
+                      <button cButton size="sm" color="outline-primary" 
+                              (click)="viewCustomer(customer.id)">
+                        <svg cIcon name="cilEye"></svg>
+                      </button>
+                      <button cButton size="sm" color="outline-secondary">
+                        <svg cIcon name="cilPencil"></svg>
+                      </button>
+                      <button cButton size="sm" color="outline-info">
+                        <svg cIcon name="cilEnvelopeClosed"></svg>
+                      </button>
+                    </c-button-group>
+                  </td>
+                </tr>
+                <tr *ngIf="customers.length === 0">
+                  <td colspan="6" class="text-center py-4">
+                    No customers found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination -->
+          <div *ngIf="!loading && totalItems > pageSize" class="d-flex justify-content-between align-items-center mt-3">
+            <div>
+              Showing {{ (currentPage - 1) * pageSize + 1 }} to 
+              {{ Math.min(currentPage * pageSize, totalItems) }} of {{ totalItems }} customers
+            </div>
+            <nav>
+              <ul class="pagination mb-0">
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <button class="page-link" (click)="onPageChange(currentPage - 1)" 
+                          [disabled]="currentPage === 1">Previous</button>
+                </li>
+                <li class="page-item" [class.active]="currentPage === page" 
+                    *ngFor="let page of getPageNumbers()">
+                  <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                </li>
+                <li class="page-item" [class.disabled]="currentPage === getTotalPages()">
+                  <button class="page-link" (click)="onPageChange(currentPage + 1)" 
+                          [disabled]="currentPage === getTotalPages()">Next</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
+</div>

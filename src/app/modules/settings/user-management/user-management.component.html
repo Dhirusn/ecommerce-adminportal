@@ -1,0 +1,115 @@
+<div class="container-fluid">
+  <!-- Header Section -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h1 class="h2 fw-bold mb-2">User management</h1>
+      <p class="text-muted mb-3">Manage your team members and their account permissions here.</p>
+
+      <div class="d-flex align-items-center mb-3">
+        <span class="fw-semibold me-2">All users</span>
+        <span class="badge bg-light text-dark rounded-pill">44</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Users Table -->
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle text-nowrap">
+        <thead class="table-light">
+          <tr>
+            <th><input type="checkbox" /></th>
+            <th>User Name</th>
+            <th>Access</th>
+            <th>Last Active</th>
+            <th>Date Added</th>
+            <th>Status</th>
+            <th>View</th>
+            <th>Published</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of paginatedUsers">
+            <td><input type="checkbox" /></td>
+            <td>
+              <div class="d-flex align-items-center">
+                <img [src]="user.imageUrls" [alt]="user.title" width="30" height="30" class="me-2 rounded" />
+                <div>
+                  <div class="fw-bold">{{ user.title }}</div>
+                  <div class="text-muted small">{{ user.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div *ngIf="user.access?.length">
+                <ng-container *ngFor="let access of user.access; let i = index">
+                  <span class="badge me-1" [ngClass]="'bg-' + getBadgeColor(access.toLowerCase().replace(' ', ''))">
+                    {{ access }}
+                  </span>
+                </ng-container>
+              </div>
+            </td>
+            <td><strong>{{ user.lastActive }}</strong></td>
+            <td><strong>{{ user.dateAdded }}</strong></td>
+            <td>
+              <span class="badge bg-success">{{ user.status }}</span>
+            </td>
+            <td>
+              <button class="btn btn-link p-0 me-2" (click)="viewProduct(user.id)" title="View Profile">
+                <svg [cIcon]="icons.cilSearch" size="sm"></svg>
+              </button>
+            </td>
+            <td>
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" [checked]="user.published" />
+              </div>
+            </td>
+            <td>
+              <button class="btn btn-link p-0 me-2" (click)="openEditForm(user)" title="Edit User">
+                <svg [cIcon]="icons.cilPencil" size="sm"></svg>
+              </button>
+              <button class="btn btn-link p-0 text-danger" (click)="deleteProduct(user.id)" title="Delete User">
+                <svg [cIcon]="icons.cilTrash" size="sm"></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div class="d-flex justify-content-between align-items-center mt-3 p-3">
+        <div class="text-muted">
+          Showing {{ currentPage }} of {{ res?.data?.totalPages }}, items {{ res?.data?.totalCount }}
+        </div>
+        <nav>
+          <ul class="pagination mb-0">
+            <li class="page-item" [class.disabled]="!res?.data?.hasPrevious">
+              <button class="page-link" (click)="prevPage()">Previous</button>
+            </li>
+            <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
+              <button class="page-link" (click)="goToPage(page)">{{ page }}</button>
+            </li>
+            <li class="page-item" [class.disabled]="!res?.data?.hasNext">
+              <button class="page-link" (click)="nextPage()">Next</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <!-- <div class=" bottom-0 end-0 p-3" style="z-index: 1050;">
+    <div class="toast show" role="alert">
+      <div class="toast-header">
+        <strong class="me-auto">"Amélie Laurent" details updated</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+      </div>
+      <div class="toast-body">
+        <button class="btn btn-outline-primary btn-sm me-2">Undo</button>
+        <button class="btn btn-primary btn-sm">View profile</button>
+      </div>
+    </div>
+  </div> -->
+</div>
